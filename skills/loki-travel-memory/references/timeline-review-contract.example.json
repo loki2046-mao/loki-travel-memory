@@ -1,0 +1,90 @@
+{
+  "fps": 24,
+  "scenes": [
+    {
+      "id": "scene-hot-spring",
+      "start": 0.0,
+      "end": 5.0,
+      "event_id": "event-hot-spring",
+      "media_ids": ["IMG_001"],
+      "primary_subject": "冒泡的温泉泉眼",
+      "protected_regions": ["泉眼", "蒸汽"],
+      "max_emphasis_overlays": 1,
+      "layout_grammar": "single_fullscreen",
+      "layout_reason": "泉眼本身是唯一动作主体，不用多图分散注意力"
+    },
+    {
+      "id": "scene-waterfall",
+      "start": 5.0,
+      "end": 8.0,
+      "event_id": "event-waterfall",
+      "media_ids": ["IMG_002"],
+      "primary_subject": "瀑布落差与水流",
+      "protected_regions": ["瀑布主体", "谷底"],
+      "max_emphasis_overlays": 1,
+      "layout_grammar": "single_fullscreen",
+      "layout_reason": "先完整建立瀑布落差，再进入后续人物或细节"
+    }
+  ],
+  "transitions": [
+    {
+      "id": "transition-water-sound",
+      "start": 4.75,
+      "end": 5.25,
+      "from_scene_id": "scene-hot-spring",
+      "to_scene_id": "scene-waterfall",
+      "kind": "sound_bridge",
+      "match_basis": ["声音", "水的语义连续"],
+      "reason": "先让瀑布水声进入，再从泉眼切到瀑布，保持行程顺序并减少硬切感",
+      "audio_bridge": "j_cut: VID_002 waterfall sound",
+      "focus_owner_before": "IMG_001",
+      "focus_owner_after": "IMG_002",
+      "moving_focus_layers": ["IMG_002"],
+      "handoff_mode": "fullscreen_dissolve",
+      "music_cue": "phrase_end@5.000"
+    }
+  ],
+  "subtitles": [
+    {
+      "id": "subtitle-bubbling",
+      "start": 1.0,
+      "end": 4.0,
+      "text": "这里能看到水泡",
+      "source_id": "VID_001"
+    }
+  ],
+  "overlays": [
+    {
+      "id": "flower-bubbling",
+      "role": "flower_copy",
+      "start": 1.5,
+      "end": 4.0,
+      "owner_scene_id": "scene-hot-spring",
+      "linked_subtitle_id": "subtitle-bubbling",
+      "exit_mode": "with_subtitle"
+    }
+  ],
+  "speech": [
+    {
+      "id": "speech-bubbling",
+      "start": 1.0,
+      "end": 4.0,
+      "source_id": "VID_001"
+    }
+  ],
+  "music": [
+    {
+      "id": "music-bed",
+      "start": 0.0,
+      "end": 8.0,
+      "source": "user-provided-audio",
+      "title": "示例曲目",
+      "artist": "示例作者",
+      "source_in": 12.0,
+      "source_out": 20.0,
+      "owner_scene_ids": ["scene-hot-spring", "scene-waterfall"],
+      "entry_mode": "with_owner",
+      "entry_reason": "随温泉画面进入，为同一自然景观段落服务"
+    }
+  ]
+}

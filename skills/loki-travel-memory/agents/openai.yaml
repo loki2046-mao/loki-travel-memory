@@ -1,0 +1,4 @@
+interface:
+  display_name: "旅行回忆剪辑"
+  short_description: "从全量素材审片到横屏成片，完成有旅行特征的照片编排、转场与验收"
+  default_prompt: "使用 $loki-travel-memory 通看并筛选这次旅行素材，恢复行程与情绪结构，选择本次叙事模式和视觉母题，完成照片编排、镜头对转场、视频、同期声、配乐、文字包装、逐图调色和成片验收。"
