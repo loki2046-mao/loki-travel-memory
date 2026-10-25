@@ -17,9 +17,22 @@
 
 这是一套给 AI 执行的工作流，**不是独立剪辑软件，也不自带一键渲染器**。安装后能做到什么，取决于 AI 宿主是否具备文件访问、图像查看、视频处理、转写和渲染能力。审计脚本只检查时间线约束，不能判断审美，也不能代替实际听审。
 
+## 这次升级解决什么
+
+v1.1.0 把反复返工的意见整理成具体执行流程：
+
+- **新素材从哪里开始**：真实能力试跑 → 全量覆盖 → 事件与精选 → 设计 → 难点连续样片 → 整片。
+- **改旧片怎样才算提升**：区分内容、关系、节奏和表现问题，保留认可基线，用同事件前后片段证明改动。
+- **人需要参与哪里**：AI 承担筛选和制作，人补充素材看不出的背景、少量关键选择和最终口味判断；不会听音的环境需明确听审安排。
+- **不把个人模板当标准**：歌曲、IP、隐私和具体版式属于本次项目；通用的是内容保护、事实、声音完整和同步退出。
+
+看 [完整制作流程](skills/loki-travel-memory/references/production-workflow.md)、[反馈如何变成规则](skills/loki-travel-memory/references/feedback-to-decisions.md)、[城市逛吃示例](skills/loki-travel-memory/references/city-food-worked-example.md) 和 [旧片升级方法](skills/loki-travel-memory/references/revision-and-proof.md)。
+
+**验证边界**：本次完成文档/引用检查与 14 项时间线脚本回归测试，没有完成另一趟全新旅行的端到端影片验证。规则能减少基础错误，不能保证不同模型的审美达到同一水平。欢迎用真实、脱敏案例反馈，包括“改了看不出提升”。
+
 ## 下载与安装
 
-[下载 v1.0.0 Skill 压缩包](https://github.com/loki2046-mao/loki-travel-memory/releases/download/v1.0.0/loki-travel-memory-v1.0.0.zip) · [浏览 Skill](skills/loki-travel-memory/SKILL.md) · [所有版本](https://github.com/loki2046-mao/loki-travel-memory/releases)
+[下载 v1.1.0 Skill 压缩包](https://github.com/loki2046-mao/loki-travel-memory/releases/download/v1.1.0/loki-travel-memory-v1.1.0.zip) · [浏览 Skill](skills/loki-travel-memory/SKILL.md) · [所有版本](https://github.com/loki2046-mao/loki-travel-memory/releases)
 
 下载后解压，将完整的 `loki-travel-memory` 文件夹交给支持 Skill 的 AI 工具安装，保留 `references`、`scripts` 和 `agents` 子目录。
 
@@ -44,6 +57,17 @@ git clone https://github.com/loki2046-mao/loki-travel-memory.git
 ```
 
 最后两项可留空，让 AI 从素材中提出建议。横竖画幅、长短、人物版本按你的实际用途调整。第一次先做短样片，能更早发现选图、排版或音乐不合口味。
+
+## 如果是改已有片
+
+```text
+使用 $loki-travel-memory 改进这条已有 vlog，原片和工程在我提供的目录里。
+先看旧片并诊断最影响观感的问题，保留我认可的设计。
+选一个问题明显的事件，做带真实声音的前后对照；
+确认改动确实更清楚、更顺之后，再应用到整片。
+```
+
+不需要先写完整行程或填写长问卷。素材看不出的地点/背景再集中补充；歌曲可指定，也可让 AI 提少量候选。没有原工程时先说明能做的修改范围。
 
 ## 包含什么
 

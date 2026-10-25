@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from collections import defaultdict
 from pathlib import Path
@@ -60,7 +61,7 @@ REQUIRED_FIELDS = {
 
 def valid_time(item: dict) -> bool:
     try:
-        return float(item["end"]) > float(item["start"])
+        return all(math.isfinite(float(item[k])) for k in ("start", "end")) and 0 <= float(item["start"]) < float(item["end"])
     except (KeyError, TypeError, ValueError):
         return False
 
@@ -80,15 +81,27 @@ def overlaps(items: list[dict], label: str, errors: list[str], tolerance: float)
 
 def validate(data: dict) -> list[str]:
     errors: list[str] = []
-    fps = float(data.get("fps", 0))
-    if fps <= 0:
+    if not isinstance(data, dict):
+        return ["contract must be an object"]
+    try:
+        fps = float(data.get("fps", 0))
+    except (TypeError, ValueError):
+        return ["fps must be a positive finite number"]
+    if not math.isfinite(fps) or fps <= 0:
         return ["fps must be a positive number"]
     frame = 1.0 / fps
     tolerance = frame + 1e-6
 
+    if not data.get("scenes"):
+        errors.append("contract must contain at least one scene")
     for collection_name, required in REQUIRED_FIELDS.items():
+        if not isinstance(data.get(collection_name, []), list):
+            return [f"{collection_name} must be a list"]
         seen_ids: set[str] = set()
         for item in data.get(collection_name, []):
+            if not isinstance(item, dict):
+                errors.append(f"{collection_name} items must be objects")
+                continue
             missing = sorted(required - set(item))
             if missing:
                 errors.append(
@@ -104,8 +117,13 @@ def validate(data: dict) -> list[str]:
             except (KeyError, TypeError, ValueError):
                 errors.append(f"{collection_name} item {item.get('id')} has invalid start/end")
                 continue
-            if end <= start:
-                errors.append(f"{collection_name} item {item.get('id')} must end after start")
+            if not math.isfinite(start) or not math.isfinite(end) or start < 0 or end <= start:
+                errors.append(f"{collection_name} item {item.get('id')} needs finite 0 <= start < end")
+            if not item_id:
+                errors.append(f"{collection_name} item requires non-empty id")
+
+    if errors:
+        return errors
 
     scenes = {str(x["id"]): x for x in data.get("scenes", []) if x.get("id")}
     subtitles = {str(x["id"]): x for x in data.get("subtitles", []) if x.get("id")}
@@ -220,22 +238,38 @@ def validate(data: dict) -> list[str]:
             errors.append(f"overlay {oid} has unsupported exit_mode {mode!r}")
 
     emphasis_roles = {"flower_copy", "progress_number", "explanatory_copy"}
-    emphasis_counts: dict[str, int] = defaultdict(int)
-    for overlay in data.get("overlays", []):
-        if overlay.get("role") in emphasis_roles:
-            emphasis_counts[str(overlay.get("owner_scene_id", ""))] += 1
-    for scene_id, count in emphasis_counts.items():
-        scene = scenes.get(scene_id)
-        if not scene:
-            continue
+    # A density budget constrains simultaneous emphasis, not total copy in a scene.
+    for scene_id, scene in scenes.items():
         try:
             budget = int(scene.get("max_emphasis_overlays"))
         except (TypeError, ValueError):
             continue
-        if count > budget:
-            errors.append(
-                f"scene {scene_id} has {count} emphasis overlays, exceeding budget {budget}"
-            )
+        events = []
+        for overlay in data.get("overlays", []):
+            if str(overlay.get("owner_scene_id")) == scene_id and overlay.get("role") in emphasis_roles:
+                events.extend([(float(overlay["start"]), 1), (float(overlay["end"]), -1)])
+        active = peak = 0
+        for _, delta in sorted(events):  # endings before starts: intervals are [start, end)
+            active += delta
+            peak = max(peak, active)
+        if peak > budget:
+            errors.append(f"scene {scene_id} has {peak} simultaneous emphasis overlays, exceeding budget {budget}")
+
+    # Subtitle timing follows the selected speech, not an unrelated image's duration.
+    for subtitle in data.get("subtitles", []):
+        linked = subtitle.get("speech_id")
+        speech = [x for x in data.get("speech", []) if
+                  (x.get("id") == linked if linked else x.get("source_id") == subtitle.get("source_id"))]
+        if not any(x.get("source_id") == subtitle.get("source_id") and
+                   float(x["start"]) - tolerance <= float(subtitle["start"]) and
+                   float(subtitle["end"]) <= float(x["end"]) + tolerance for x in speech):
+            errors.append(f"subtitle {subtitle.get('id')} has no matching speech interval")
+        owner_id = subtitle.get("owner_scene_id")
+        if owner_id is not None:
+            owner = scenes.get(str(owner_id))
+            if not owner or not (float(owner["start"]) - tolerance <= float(subtitle["start"]) and
+                                 float(subtitle["end"]) <= float(owner["end"]) + tolerance):
+                errors.append(f"subtitle {subtitle.get('id')} falls outside its visual owner")
 
     ordered_music = sorted(
         (item for item in data.get("music", []) if valid_time(item)),
