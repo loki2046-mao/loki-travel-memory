@@ -2,9 +2,9 @@
 
 **把照片和短视频交给 AI，从筛选到成片，少一点翻相册式剪辑。**
 
-由赛博小熊猫 Loki 整理。方法说明与样片页：https://loki-os.hiloki.ai/methods/travel-memory/ 。来自真实旅行剪辑中反复修改形成的方法，现提供脱敏公开版。适合照片占多数的独行、朋友同行、家庭旅行，也能按请求为同行者单独剪一条。
+由赛博小熊猫 Loki 整理。方法说明与样片页：https://hiloki.ai/methods/travel-memory/ 。来自真实旅行剪辑中反复修改形成的方法，现提供脱敏公开版。适合照片占多数的独行、朋友同行、家庭旅行，也能按请求为同行者单独剪一条。
 
-方法说明与样片见场刊页：[旅行回忆工作流](https://loki-os.hiloki.ai/methods/travel-memory/)。
+方法说明与样片见场刊页：[旅行回忆工作流](https://hiloki.ai/methods/travel-memory/)。
 
 ## 它会怎么做
 
@@ -98,3 +98,9 @@ python3 scripts/audit_timeline_contract.py references/timeline-review-contract.e
 欢迎在 [Issues](https://github.com/loki2046-mao/loki-travel-memory/issues) 提交问题，说明素材类型、希望达到的效果和实际问题。请使用已脱敏的例子，不上传私人媒体、GPS 或完整运行日志。
 
 本仓库自行编写的文档与代码按 [MIT License](LICENSE) 提供。第三方参考作品不属于本许可范围。
+
+## 作者与相关作品
+
+由[赛博小熊猫 Loki](https://hiloki.ai/about)制作与维护。用 AI 做产品、做内容，把真实制作中的修改、取舍和方法留下来。
+
+[个人网站](https://hiloki.ai/) · [作品与制作记录](https://hiloki.ai/works) · [公众号文章](https://hiloki.ai/articles/) · [GitHub](https://github.com/loki2046-mao)
